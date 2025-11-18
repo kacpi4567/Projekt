@@ -1,3 +1,5 @@
 project.dSYM/Contents/Resources/DWARF/project
 project
 main
+project.exe
+.vscode/settings.json
