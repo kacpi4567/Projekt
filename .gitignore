@@ -3,3 +3,5 @@ project
 main
 project.exe
 .vscode/settings.json
+.DS_Store
+.DS_Store
