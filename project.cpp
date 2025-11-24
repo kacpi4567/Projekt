@@ -97,6 +97,7 @@ protected:
   int nextPosition = -1;
   int moves = 0;
   agentType type;
+  int currentTarget = -1;
 
 public:
   Agent(int startPosition, vector<int> goals, agentType _agentType)
@@ -158,6 +159,8 @@ public:
   bool isGoalPoint(int point) const {
     return goalPoints.find(point) != goalPoints.end();
   }
+  void setCurrentTarget(int target) { currentTarget = target; }
+  int getCurrentTarget() { return currentTarget; }
 };
 
 class Simulation {
@@ -173,10 +176,10 @@ public:
     int turn = 0;
     while (true) {
       bool allFinished = true;
+
       for (auto &agent : agents) {
-        if (!agent->hasGoalPoints()) {
+        if (agent->hasFinished())
           continue;
-        }
         if (agent->shouldCalculateNewPath()) {
           vector<int> path;
           if (agent->getType() == ORDER) {
@@ -186,30 +189,39 @@ public:
           }
           if (!path.empty() && path.size() > 1) {
             agent->setNextStep(path[1]);
+            // ZAPISZ CEL do którego agent aktualnie idzie
+            agent->setCurrentTarget(path.back());
           }
         }
       }
+
       for (auto &agent : agents) {
-        if (!agent->hasGoalPoints()) {
+        if (agent->hasFinished())
           continue;
-        }
+
         if (agent->getNextPosition() != -1) {
           int oldPos = agent->getPosition();
           int newPos = agent->getNextPosition();
           agent->setPosition(newPos);
-          bool wasGoalPoint = agent->isGoalPoint(agent->getPosition());
-          if (wasGoalPoint) {
-            agent->visitPoint(agent->getPosition());
+
+          // ZMIANA: Odwiedź cel tylko jeśli to jest AKTUALNY CEL agenta
+          bool wasGoalPoint = agent->isGoalPoint(newPos);
+          if (wasGoalPoint && newPos == agent->getCurrentTarget()) {
+            agent->visitPoint(newPos);
           }
-          if (oldPos != newPos && agent->hasGoalPoints()) {
+
+          if (oldPos != newPos) {
             agent->recordMove();
           }
+
           agent->setNextStep(-1);
         }
+
         if (!agent->hasFinished()) {
           allFinished = false;
         }
       }
+
       if (allFinished) {
         cout << "Simulation finished after " << turn << " turns!\n" << endl;
         for (auto &a : agents) {
@@ -218,23 +230,18 @@ public:
         break;
       }
       turn++;
-      if (turn > 1000) {
-        cout << "Simulation stopped after 1000 turns!\n" << endl;
-        for (auto &a : agents) {
-          a->show();
-        }
+      if (turn > 1000)
         break;
-      }
     }
   }
   void start(int turnLimit) {
     int turn = 0;
     while (true) {
       bool allFinished = true;
+
       for (auto &agent : agents) {
-        if (!agent->hasGoalPoints()) {
+        if (agent->hasFinished())
           continue;
-        }
         if (agent->shouldCalculateNewPath()) {
           vector<int> path;
           if (agent->getType() == ORDER) {
@@ -244,30 +251,39 @@ public:
           }
           if (!path.empty() && path.size() > 1) {
             agent->setNextStep(path[1]);
+            // ZAPISZ CEL do którego agent aktualnie idzie
+            agent->setCurrentTarget(path.back());
           }
         }
       }
+
       for (auto &agent : agents) {
-        if (!agent->hasGoalPoints()) {
+        if (agent->hasFinished())
           continue;
-        }
+
         if (agent->getNextPosition() != -1) {
           int oldPos = agent->getPosition();
           int newPos = agent->getNextPosition();
           agent->setPosition(newPos);
-          bool wasGoalPoint = agent->isGoalPoint(agent->getPosition());
-          if (wasGoalPoint) {
-            agent->visitPoint(agent->getPosition());
+
+          // ZMIANA: Odwiedź cel tylko jeśli to jest AKTUALNY CEL agenta
+          bool wasGoalPoint = agent->isGoalPoint(newPos);
+          if (wasGoalPoint && newPos == agent->getCurrentTarget()) {
+            agent->visitPoint(newPos);
           }
-          if (oldPos != newPos && agent->hasGoalPoints()) {
+
+          if (oldPos != newPos) {
             agent->recordMove();
           }
+
           agent->setNextStep(-1);
         }
+
         if (!agent->hasFinished()) {
           allFinished = false;
         }
       }
+
       if (allFinished) {
         cout << "Simulation finished after " << turn << " turns!\n" << endl;
         for (auto &a : agents) {
@@ -380,12 +396,12 @@ int main() {
   Simulation s1(&g1);
   Simulation s2(&g2);
   Simulation s3(&g3);
-  s1.addAgent(make_unique<Agent>(1, vector<int>{4, 7, 12, 22, 11}, ORDER));
-  s1.addAgent(make_unique<Agent>(1, vector<int>{4, 7, 12, 22, 11}, RANDOM));
+  s1.addAgent(make_unique<Agent>(1, vector<int>{7, 2, 10, 17, 21, 16}, ORDER));
+  s1.addAgent(make_unique<Agent>(1, vector<int>{7, 2, 10, 17, 21, 16}, RANDOM));
   s2.addAgent(make_unique<Agent>(1, vector<int>{8, 13, 4, 10}, ORDER));
   s2.addAgent(make_unique<Agent>(1, vector<int>{8, 13, 4, 10}, RANDOM));
-  s3.addAgent(make_unique<Agent>(1, vector<int>{10, 7, 12, 17}, ORDER));
-  s3.addAgent(make_unique<Agent>(1, vector<int>{10, 7, 12, 17}, RANDOM));
+  s3.addAgent(make_unique<Agent>(1, vector<int>{8, 11, 13, 15, 2, 6}, ORDER));
+  s3.addAgent(make_unique<Agent>(1, vector<int>{8, 11, 13, 15, 2, 6}, RANDOM));
   cout << "GRAPH 1:\n\n";
   s1.start();
   cout << "GRAPH 2:\n\n";
