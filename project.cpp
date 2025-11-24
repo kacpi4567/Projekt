@@ -369,10 +369,21 @@ int main() {
   g3.sortAdjacencyList();
 
   Simulation s1(&g1);
+  Simulation s2(&g2);
+  Simulation s3(&g3);
   s1.addAgent(
       make_unique<Agent>(1, unordered_set<int>{4, 7, 12, 22, 11}, ORDER));
   s1.addAgent(
       make_unique<Agent>(1, unordered_set<int>{4, 7, 12, 22, 11}, RANDOM));
+  s2.addAgent(make_unique<Agent>(1, unordered_set<int>{8, 13, 4, 10}, ORDER));
+  s2.addAgent(make_unique<Agent>(1, unordered_set<int>{8, 13, 4, 10}, RANDOM));
+  s3.addAgent(make_unique<Agent>(1, unordered_set<int>{10, 7, 12, 17}, ORDER));
+  s3.addAgent(make_unique<Agent>(1, unordered_set<int>{10, 7, 12, 17}, RANDOM));
+  cout << "GRAPH 1:\n\n";
   s1.start();
+  cout << "GRAPH 2:\n\n";
+  s2.start();
+  cout << "GRAPH 3:\n\n";
+  s3.start();
   return 0;
 }
