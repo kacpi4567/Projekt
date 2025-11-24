@@ -93,13 +93,18 @@ class Agent {
 protected:
   int position;
   unordered_set<int> goalPoints;
+  vector<int> goalOrder;
   int nextPosition = -1;
   int moves = 0;
   agentType type;
 
 public:
-  Agent(int startPosition, unordered_set<int> goals, agentType _agentType)
-      : position{startPosition}, goalPoints{goals}, type{_agentType} {}
+  Agent(int startPosition, vector<int> goals, agentType _agentType)
+      : position{startPosition}, goalOrder{goals}, type{_agentType} {
+    for (int goal : goals) {
+      goalPoints.insert(goal);
+    }
+  }
   bool hasFinished() { return goalPoints.empty(); }
   void visitPoint(int point) { goalPoints.erase(point); }
   void recordMove() { moves++; }
@@ -129,8 +134,12 @@ public:
   vector<int> pathToFirstGoalPoint(Graph &graph) {
     if (goalPoints.empty())
       return {};
-    int target = *goalPoints.begin();
-    return graph.BFS(position, target);
+    for (int goal : goalOrder) {
+      if (goalPoints.find(goal) != goalPoints.end()) {
+        return graph.BFS(position, goal);
+      }
+    }
+    return {};
   }
   vector<int> pathToRandomGoalPoint(Graph &graph) {
     if (goalPoints.empty())
@@ -371,14 +380,12 @@ int main() {
   Simulation s1(&g1);
   Simulation s2(&g2);
   Simulation s3(&g3);
-  s1.addAgent(
-      make_unique<Agent>(1, unordered_set<int>{4, 7, 12, 22, 11}, ORDER));
-  s1.addAgent(
-      make_unique<Agent>(1, unordered_set<int>{4, 7, 12, 22, 11}, RANDOM));
-  s2.addAgent(make_unique<Agent>(1, unordered_set<int>{8, 13, 4, 10}, ORDER));
-  s2.addAgent(make_unique<Agent>(1, unordered_set<int>{8, 13, 4, 10}, RANDOM));
-  s3.addAgent(make_unique<Agent>(1, unordered_set<int>{10, 7, 12, 17}, ORDER));
-  s3.addAgent(make_unique<Agent>(1, unordered_set<int>{10, 7, 12, 17}, RANDOM));
+  s1.addAgent(make_unique<Agent>(1, vector<int>{4, 7, 12, 22, 11}, ORDER));
+  s1.addAgent(make_unique<Agent>(1, vector<int>{4, 7, 12, 22, 11}, RANDOM));
+  s2.addAgent(make_unique<Agent>(1, vector<int>{8, 13, 4, 10}, ORDER));
+  s2.addAgent(make_unique<Agent>(1, vector<int>{8, 13, 4, 10}, RANDOM));
+  s3.addAgent(make_unique<Agent>(1, vector<int>{10, 7, 12, 17}, ORDER));
+  s3.addAgent(make_unique<Agent>(1, vector<int>{10, 7, 12, 17}, RANDOM));
   cout << "GRAPH 1:\n\n";
   s1.start();
   cout << "GRAPH 2:\n\n";
