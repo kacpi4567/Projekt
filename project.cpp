@@ -372,13 +372,23 @@ int main() {
   Simulation s2(&g2);
   Simulation s3(&g3);
   s1.addAgent(
-      make_unique<Agent>(1, unordered_set<int>{4, 7, 12, 22, 11}, ORDER));
+      make_unique<Agent>(1, unordered_set<int>{4, 7, 12, 22, 11, 15}, ORDER));
   s1.addAgent(
-      make_unique<Agent>(1, unordered_set<int>{4, 7, 12, 22, 11}, RANDOM));
-  s2.addAgent(make_unique<Agent>(1, unordered_set<int>{8, 13, 4, 10}, ORDER));
-  s2.addAgent(make_unique<Agent>(1, unordered_set<int>{8, 13, 4, 10}, RANDOM));
-  s3.addAgent(make_unique<Agent>(1, unordered_set<int>{10, 7, 12, 17}, ORDER));
-  s3.addAgent(make_unique<Agent>(1, unordered_set<int>{10, 7, 12, 17}, RANDOM));
+      make_unique<Agent>(1, unordered_set<int>{4, 7, 12, 22, 11, 15}, RANDOM));
+  s1.addAgent(
+      make_unique<Agent>(1, unordered_set<int>{7, 2, 10, 17, 21, 16}, ORDER));
+  s1.addAgent(
+      make_unique<Agent>(1, unordered_set<int>{7, 2, 10, 17, 21, 16}, RANDOM));
+
+  s2.addAgent(make_unique<Agent>(1, unordered_set<int>{8, 15, 17, 9, 22, 11}, ORDER));
+  s2.addAgent(make_unique<Agent>(1, unordered_set<int>{8, 15, 17, 9, 22, 11}, RANDOM));
+  s2.addAgent(make_unique<Agent>(2, unordered_set<int>{4, 20, 18, 6, 19, 23}, ORDER));
+  s2.addAgent(make_unique<Agent>(2, unordered_set<int>{4, 20, 18, 6, 19, 23}, RANDOM));
+  
+  s3.addAgent(make_unique<Agent>(1, unordered_set<int>{10, 7, 12, 17, 5, 16}, ORDER));
+  s3.addAgent(make_unique<Agent>(1, unordered_set<int>{10, 7, 12, 17, 5, 16}, RANDOM));
+  s3.addAgent(make_unique<Agent>(3, unordered_set<int>{8, 11, 13, 15, 2, 6}, ORDER));
+  s3.addAgent(make_unique<Agent>(3, unordered_set<int>{8, 11, 13, 15, 2, 6}, RANDOM));
   cout << "GRAPH 1:\n\n";
   s1.start();
   cout << "GRAPH 2:\n\n";
